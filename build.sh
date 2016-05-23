@@ -57,7 +57,7 @@ mkdir ${E2FSPROGS}_install
 tar xf $SRCS/${E2FSPROGS}.tar.gz
 pushd ${E2FSPROGS}
 
-./configure --host=arm-linux-gnueabihf --prefix=$BUILD_ROOT/${E2FSPROGS}_install --disable-backtrace --disable-debugfs --disable-imager --disable-resizer --disable-defrag --disable-tls --disable-uuidd --disable-nls
+./configure --host=arm-linux-gnueabihf --prefix=$BUILD_ROOT/${E2FSPROGS}_install --disable-backtrace --disable-debugfs --disable-imager --disable-defrag --disable-tls --disable-uuidd --disable-nls
 make -j${NCPUS}
 make install
 
@@ -79,6 +79,8 @@ cp ${E2FSPROGS}_install/sbin/e2fsck $SYS_ROOT/sbin
 arm-linux-gnueabihf-strip $SYS_ROOT/sbin/e2fsck
 cp ${E2FSPROGS}_install/sbin/mkfs.ext4 $SYS_ROOT/sbin
 arm-linux-gnueabihf-strip $SYS_ROOT/sbin/mkfs.ext4
+cp ${E2FSPROGS}_install/sbin/resize2fs $SYS_ROOT/sbin
+arm-linux-gnueabihf-strip $SYS_ROOT/sbin/resize2fs
 
 cp ${PV}_install/bin/pv $SYS_ROOT/bin
 arm-linux-gnueabihf-strip $SYS_ROOT/bin/pv
