@@ -127,7 +127,14 @@ fi
 
 mdev -s
 
-mount -t ${ROOTFSTYPE} ${ROOT} ${rootmnt}
+mount -t ${ROOTFSTYPE} ${ROOT} ${rootmnt} -o errors=remount-ro,noatime,nodiratime
+if [ -e ${rootmnt}/.need_resize ]; then
+	e2fsck -y -f ${ROOT} > /dev/null 2>&1
+	resize2fs ${ROOT} > /dev/null 2>&1
+	rm ${rootmnt}/.need_resize
+	sync
+fi
+
 ROOT_DISK=${ROOT%?}
 MODULES_PART=${ROOT_DISK}2
 
