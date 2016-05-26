@@ -138,7 +138,7 @@ fi
 ROOT_DISK=${ROOT%?}
 MODULES_PART=${ROOT_DISK}2
 
-mount -t ${ROOTFSTYPE} ${MODULES_PART} /lib/modules
+mount -t ${ROOTFSTYPE} ${MODULES_PART} /lib/modules -o ro
 
 [ -d ${rootmnt}/usr/lib/modules ] || mkdir ${rootmnt}/usr/lib/modules
 mount -n -o move /lib/modules ${rootmnt}/usr/lib/modules
