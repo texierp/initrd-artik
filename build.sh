@@ -1,5 +1,27 @@
 #!/bin/bash
 
+BOARD_DIR=`pwd`/board
+TARGET=
+
+usage()
+{
+	echo "usage: build.sh [options]"
+	echo "-h		Print this help message"
+	echo "-b [board]	Target board(artik520, artik1020, artik530, artik710)"
+}
+
+parse_options()
+{
+	TEMP=`getopt -o "h:b:" -- "$@"`
+	eval set -- "$TEMP"
+	case "$1" in
+		-b ) TARGET=$2;;
+		-h | * ) usage; exit 1 ;;
+	esac
+}
+
+parse_options $@
+
 set -x
 set -e
 
@@ -95,6 +117,11 @@ rm -rf build/*
 
 pushd $SYS_ROOT
 cp -rf $SCRIPT_DIR/* .
+
+if [ -d $BOARD_DIR/$TARGET ]; then
+	cp -rf $BOARD_DIR/$TARGET/* .
+fi
+
 find . | cpio -o -H newc | gzip > $OUTPUT/initrd.gz
 popd
 
