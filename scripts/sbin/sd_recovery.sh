@@ -1,5 +1,7 @@
 #!/bin/sh
 
+SCRIPT_PATH="$(dirname $(readlink -f "$0"))"
+
 EMMC_ROOT_DEV=/dev/mmcblk0p3
 SD_ROOT_DEV=/dev/mmcblk1p3
 
@@ -23,9 +25,11 @@ mdev -s
 
 mount -t ext4 $SD_ROOT_DEV $SD_MNT
 
+[ -e $SCRIPT_PATH/pre_recovery.sh ] && $SCRIPT_PATH/pre_recovery.sh
 echo "Please wait until the fusing has been finished"
 
 fuse_rootfs_partition
 
 echo "Fusing is done."
 echo "Please turn off the board and convert to eMMC boot mode"
+[ -e $SCRIPT_PATH/post_recovery.sh ] && $SCRIPT_PATH/post_recovery.sh

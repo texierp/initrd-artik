@@ -1,0 +1,1 @@
+../../artik710/sbin/post_recovery.sh
