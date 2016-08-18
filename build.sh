@@ -35,6 +35,12 @@ TOOLCHAIN_ROOT=$OUTPUT/toolchain
 SYS_ROOT=$OUTPUT/sys_root
 SCRIPT_DIR=`pwd`/scripts
 
+if [ $TARGET == "artik710" ]; then
+	TARGET_ARCH=arm64
+else
+	TARGET_ARCH=arm
+fi
+
 [ -d output ] || mkdir output
 [ -d output/sys_root ] || mkdir output/sys_root
 [ -d output/toolchain ] || mkdir output/toolchain
@@ -128,7 +134,7 @@ popd
 rm -rf $OUTPUT/sys_root
 
 pushd $OUTPUT
-mkimage -A arm -O linux -T ramdisk -C none -a 0 -e 0 -n uInitrd -d initrd.gz uInitrd
+mkimage -A $TARGET_ARCH -O linux -T ramdisk -C none -a 0 -e 0 -n uInitrd -d initrd.gz uInitrd
 popd
 
 ls -al $OUTPUT/uInitrd
