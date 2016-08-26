@@ -125,7 +125,7 @@ pushd $SYS_ROOT
 cp -rf $SCRIPT_DIR/* .
 
 if [ -d $BOARD_DIR/$TARGET ]; then
-	cp -rf $BOARD_DIR/$TARGET/* .
+	cp -Lrf $BOARD_DIR/$TARGET/* .
 fi
 
 find . | cpio -o -H newc | gzip > $OUTPUT/initrd.gz
