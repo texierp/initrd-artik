@@ -55,6 +55,17 @@ echo "Please wait until the fusing has been finished"
 
 fuse_rootfs_partition
 
-echo "Fusing is done."
-echo "Please turn off the board and convert to eMMC boot mode"
-[ -e $SCRIPT_PATH/post_recovery.sh ] && $SCRIPT_PATH/post_recovery.sh
+RET=$?
+
+if [ -e $SCRIPT_PATH/post_recovery.sh ]; then
+	$SCRIPT_PATH/post_recovery.sh
+	RET=$?
+fi
+
+if [ $RET == 0 ]; then
+	echo "Fusing is done."
+	echo "Please turn off the board and convert to eMMC boot mode"
+else
+	echo "Fusing has been failed."
+	echo "Please check your fimrware file and try again"
+fi
