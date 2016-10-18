@@ -6,6 +6,7 @@
 [ -d /proc ] || mkdir /proc
 [ -d /tmp ] || mkdir /tmp
 [ -d /run ] || mkdir /run
+[ -d /lib/modules ] || mkdir /lib/modules
 mkdir -p /var/lock
 mount -t sysfs -o nodev,noexec,nosuid sysfs /sys
 mount -t proc -o nodev,noexec,nosuid proc /proc
@@ -136,6 +137,11 @@ fi
 
 ROOT_DISK=${ROOT%?}
 MODULES_PART=${ROOT_DISK}2
+
+mount -t ${ROOTFSTYPE} ${MODULES_PART} /lib/modules -o ro
+
+[ -d ${rootmnt}/usr/lib/modules ] || mkdir ${rootmnt}/usr/lib/modules
+mount -n -o move /lib/modules ${rootmnt}/usr/lib/modules
 
 mount -n -o move /dev ${rootmnt}/dev
 
