@@ -55,7 +55,7 @@ TOOLCHAIN_NAME=`echo $TOOLCHAIN | sed 's/^/./' | rev | cut -d. -f3- | rev | cut 
 
 if [ ! -f $PREBUILT/$TOOLCHAIN ]; then
 	pushd $PREBUILT
-	wget http://releases.linaro.org/15.02/components/toolchain/binaries/arm-linux-gnueabihf/gcc-linaro-4.9-2015.02-3-x86_64_arm-linux-gnueabihf.tar.xz
+	wget http://releases.linaro.org/archive/15.02/components/toolchain/binaries/arm-linux-gnueabihf/gcc-linaro-4.9-2015.02-3-x86_64_arm-linux-gnueabihf.tar.xz
 	popd
 fi
 
