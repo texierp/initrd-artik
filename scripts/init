@@ -135,6 +135,28 @@ if [ -e ${rootmnt}/.need_resize ]; then
 	sync
 fi
 
+if [ -e ${rootmnt}/.need_sd_resize ]; then
+	umount ${rootmnt}
+	ROOT_START_SECT=`fdisk -u -l ${ROOT%??} | grep ${ROOT} | awk '{ print $2 }'`
+	fdisk -u ${ROOT%??} <<EOF
+p
+d
+3
+n
+p
+3
+$ROOT_START_SECT
+
+w
+EOF
+	sync
+	e2fsck -y -f ${ROOT} > /dev/null 2>&1
+	resize2fs ${ROOT} > /dev/null 2>&1
+	mount -t ${ROOTFSTYPE} ${ROOT} ${rootmnt} -o errors=remount-ro,noatime,nodiratime
+	rm ${rootmnt}/.need_sd_resize
+	sync
+fi
+
 ROOT_DISK=${ROOT%?}
 MODULES_PART=${ROOT_DISK}2
 
