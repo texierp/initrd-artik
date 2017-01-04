@@ -43,15 +43,15 @@ fi
 
 [ -d output ] || mkdir output
 [ -d output/sys_root ] || mkdir output/sys_root
-[ -d output/toolchain ] || mkdir output/toolchain
 
 BUSYBOX=busybox-1_24_0
 BUSYBOX_CONFIG=`pwd`/configs/busybox_config
 E2FSPROGS=e2fsprogs-1.42.13
 PV=pv-1.6.0
-LIBC=`pwd`/prebuilt/libc-2.19-2014.08-1_sysroot.tar.gz
+LIBC_ESSENTIAL="libm.so.* libc.so.* libpthread.so.* ld-linux-armhf.so.*"
 TOOLCHAIN=gcc-linaro-4.9-2015.02-3-x86_64_arm-linux-gnueabihf.tar.xz
 TOOLCHAIN_NAME=`echo $TOOLCHAIN | sed 's/^/./' | rev | cut -d. -f3- | rev | cut -c2-`
+TOOLCHAIN_PREFIX=arm-linux-gnueabihf-
 
 if [ ! -f $PREBUILT/$TOOLCHAIN ]; then
 	pushd $PREBUILT
@@ -76,8 +76,8 @@ tar xf $SRCS/${BUSYBOX}.tar.gz
 pushd ${BUSYBOX}
 
 cp ${BUSYBOX_CONFIG} .config
-make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -j${NCPUS}
-make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- install
+make ARCH=arm CROSS_COMPILE=$TOOLCHAIN_PREFIX -j${NCPUS}
+make ARCH=arm CROSS_COMPILE=$TOOLCHAIN_PREFIX install
 
 popd
 
@@ -85,7 +85,7 @@ mkdir ${E2FSPROGS}_install
 tar xf $SRCS/${E2FSPROGS}.tar.gz
 pushd ${E2FSPROGS}
 
-./configure --host=arm-linux-gnueabihf --prefix=$BUILD_ROOT/${E2FSPROGS}_install --disable-backtrace --disable-debugfs --disable-imager --disable-defrag --disable-tls --disable-uuidd --disable-nls
+./configure --host=${TOOLCHAIN_PREFIX%?} --prefix=$BUILD_ROOT/${E2FSPROGS}_install --disable-backtrace --disable-debugfs --disable-imager --disable-defrag --disable-tls --disable-uuidd --disable-nls
 make -j${NCPUS}
 make install
 
@@ -95,29 +95,32 @@ mkdir ${PV}_install
 tar xf $SRCS/${PV}.tar.gz
 pushd ${PV}
 
-./configure --host=arm-linux-gnueabihf --prefix=${BUILD_ROOT}/${PV}_install
-LD=arm-linux-gnueabihf-ld make -j${NCPUS}
-LD=arm-linux-gnueabihf-ld make install
+./configure --host=${TOOLCHAIN_PREFIX%?} --prefix=${BUILD_ROOT}/${PV}_install
+LD=${TOOLCHAIN_PREFIX}ld make -j${NCPUS}
+LD=${TOOLCHAIN_PREFIX}ld make install
 
 popd
 
-arm-linux-gnueabihf-gcc -o run-init $SRCS/run-init.c
+${TOOLCHAIN_PREFIX}gcc -o run-init $SRCS/run-init.c
 
 cp ${E2FSPROGS}_install/sbin/e2fsck $SYS_ROOT/sbin
-arm-linux-gnueabihf-strip $SYS_ROOT/sbin/e2fsck
+${TOOLCHAIN_PREFIX}strip $SYS_ROOT/sbin/e2fsck
 cp ${E2FSPROGS}_install/sbin/mkfs.ext4 $SYS_ROOT/sbin
-arm-linux-gnueabihf-strip $SYS_ROOT/sbin/mkfs.ext4
+${TOOLCHAIN_PREFIX}strip $SYS_ROOT/sbin/mkfs.ext4
 cp ${E2FSPROGS}_install/sbin/resize2fs $SYS_ROOT/sbin
-arm-linux-gnueabihf-strip $SYS_ROOT/sbin/resize2fs
+${TOOLCHAIN_PREFIX}strip $SYS_ROOT/sbin/resize2fs
 
 cp ${PV}_install/bin/pv $SYS_ROOT/bin
-arm-linux-gnueabihf-strip $SYS_ROOT/bin/pv
+${TOOLCHAIN_PREFIX}strip $SYS_ROOT/bin/pv
 
 cp run-init $SYS_ROOT/sbin
-arm-linux-gnueabihf-strip $SYS_ROOT/sbin/run-init
+${TOOLCHAIN_PREFIX}strip $SYS_ROOT/sbin/run-init
 
 [ -d $SYS_ROOT/lib ] || mkdir $SYS_ROOT/lib
-tar xf ${LIBC} -C $SYS_ROOT/lib
+pushd $TOOLCHAIN_ROOT/$TOOLCHAIN_NAME/*/libc/lib/
+cp -L $LIBC_ESSENTIAL $SYS_ROOT/lib
+${TOOLCHAIN_PREFIX}strip $SYS_ROOT/lib/*
+popd
 
 rm -rf build/*
 
