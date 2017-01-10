@@ -136,9 +136,10 @@ if [ -e ${rootmnt}/.need_resize ]; then
 fi
 
 if [ -e ${rootmnt}/.need_sd_resize ]; then
+	echo "Need to resize the root partition..."
 	umount ${rootmnt}
 	ROOT_START_SECT=`fdisk -u -l ${ROOT%??} | grep ${ROOT} | awk '{ print $2 }'`
-	fdisk -u ${ROOT%??} <<EOF
+	fdisk -u ${ROOT%??} <<EOF>/dev/null
 p
 d
 3
@@ -150,9 +151,10 @@ $ROOT_START_SECT
 w
 EOF
 	sync
+	mdev -s
 	e2fsck -y -f ${ROOT} > /dev/null 2>&1
-	resize2fs ${ROOT} > /dev/null 2>&1
 	mount -t ${ROOTFSTYPE} ${ROOT} ${rootmnt} -o errors=remount-ro,noatime,nodiratime
+	resize2fs ${ROOT} > /dev/null 2>&1
 	rm ${rootmnt}/.need_sd_resize
 	sync
 fi
