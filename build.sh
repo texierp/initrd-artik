@@ -127,6 +127,7 @@ rm -rf build/*
 pushd $SYS_ROOT
 cp -rf $SCRIPT_DIR/* .
 
+cp -Lrf $BOARD_DIR/common/* .
 if [ -d $BOARD_DIR/$TARGET ]; then
 	cp -Lrf $BOARD_DIR/$TARGET/* .
 fi
