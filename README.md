@@ -1,4 +1,4 @@
-# Ramdisk for ARTIK5 and ARTIK10
+# Ramdisk for ARTIK series(artik5, artik10, artik710, artik530)
 ## Contents
 1. [Introduction](#1-introduction)
 2. [License](#2-license)
@@ -6,9 +6,9 @@
 4. [Update guide](#4-update-guide)
 
 ## 1. Introduction
-This 'initrd-artik' repository is ramdisk source for artik5(artik520) and
-artik10(artik1020). The initrd of artik will do recovery the eMMC partitions
-from sdcard fusing image.
+This 'initrd-artik' repository is ramdisk source for artik5(artik520),
+artik10(artik1020), artik710 and artik530. The initrd of artik will do
+recovery the eMMC partitions from sdcard fusing image.
 
 ---
 ## 2. License
@@ -27,7 +27,7 @@ sudo apt-get install u-boot-tools
 
 ### 3.2 Build the initrd
 ```
-./build.sh
+./build.sh -b [Board type:artik520, artik1020, artik530, artik710]
 ```
 
 The 'uInitrd' file will be generated into output/uInitrd
