@@ -53,6 +53,7 @@ elif [ "$ARTIK530" != "" ]; then
 elif [ "$ARTIK10" != "" ]; then
         ZIGBEE_TTY="-p /dev/ttySAC0"
         THREAD_TTY="-u /dev/ttySAC0"
+	VERSION=$MAJOR_VERSION
 else # ARTIK 710
         ZIGBEE_TTY="-n 1 -p /dev/ttySAC0"
         THREAD_TTY="-f x -u /dev/ttySAC0"
