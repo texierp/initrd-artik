@@ -7,6 +7,7 @@
 [ -d /tmp ] || mkdir /tmp
 [ -d /run ] || mkdir /run
 [ -d /lib/modules ] || mkdir /lib/modules
+[ -d /boot ] || mkdir /boot
 mkdir -p /var/lock
 mount -t sysfs -o nodev,noexec,nosuid sysfs /sys
 mount -t proc -o nodev,noexec,nosuid proc /proc
@@ -34,6 +35,7 @@ export init=/sbin/init
 export quiet=n
 export readonly=n
 export rootmnt=/root
+export OTA=false
 
 # Parse command line options
 for x in $(cat /proc/cmdline); do
@@ -107,6 +109,22 @@ for x in $(cat /proc/cmdline); do
 	emergency_shell)
 		emergency_shell=y
 		;;
+	bootfrom=*)
+		BOOTPART=${x#bootfrom=}
+		if [ ${BOOTPART} == 3 ]; then
+			BOOT_PART=3
+			MODULES_PART=6
+		elif [ ${BOOTPART} == 2 ]; then
+			BOOT_PART=2
+			MODULES_PART=5
+		fi
+		;;
+	ota)
+		OTA=true
+		;;
+	rescue=*)
+		RESCUE=${x#rescue=}
+		;;
 	esac
 done
 
@@ -160,9 +178,23 @@ EOF
 fi
 
 ROOT_DISK=${ROOT%?}
-MODULES_PART=${ROOT_DISK}2
+if [ "$OTA" == "true" ]; then
+	if [ $RESCUE -eq 0 ]; then
+		/sbin/artik-updater -s
+	else
+		/sbin/artik-updater -f
+	fi
+	# Mount & move boot partition
+	mount -t ${ROOTFSTYPE} ${ROOT_DISK}${BOOT_PART} /boot -o ro
+	[ -d ${rootmnt}/boot ] || mkdir ${rootmnt}/boot
+	mount -n -o move /boot ${rootmnt}/boot
 
-mount -t ${ROOTFSTYPE} ${MODULES_PART} /lib/modules -o ro
+	# Mount & move modules partition
+	mount -t ${ROOTFSTYPE} ${ROOT_DISK}${MODULES_PART} /lib/modules -o ro
+else
+	MODULES_PART=${ROOT_DISK}2
+	mount -t ${ROOTFSTYPE} ${MODULES_PART} /lib/modules -o ro
+fi
 
 [ -d ${rootmnt}/lib/modules ] || mkdir ${rootmnt}/lib/modules
 mount -n -o move /lib/modules ${rootmnt}/lib/modules
@@ -182,6 +214,7 @@ unset ROOTDELAY
 unset ROOT
 unset quiet
 unset readonly
+unset OTA
 
 # Chain to real filesystem
 exec run-init ${rootmnt} ${init} "$@" <${rootmnt}/dev/console >${rootmnt}/dev/console 2>&1

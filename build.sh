@@ -102,6 +102,7 @@ LD=${TOOLCHAIN_PREFIX}ld make install
 popd
 
 ${TOOLCHAIN_PREFIX}gcc -o run-init $SRCS/run-init.c
+${TOOLCHAIN_PREFIX}gcc -o artik-updater $SRCS/artik-updater.c
 
 cp ${E2FSPROGS}_install/sbin/e2fsck $SYS_ROOT/sbin
 ${TOOLCHAIN_PREFIX}strip $SYS_ROOT/sbin/e2fsck
@@ -115,6 +116,9 @@ ${TOOLCHAIN_PREFIX}strip $SYS_ROOT/bin/pv
 
 cp run-init $SYS_ROOT/sbin
 ${TOOLCHAIN_PREFIX}strip $SYS_ROOT/sbin/run-init
+
+cp artik-updater $SYS_ROOT/sbin
+${TOOLCHAIN_PREFIX}strip $SYS_ROOT/sbin/artik-updater
 
 [ -d $SYS_ROOT/lib ] || mkdir $SYS_ROOT/lib
 pushd $TOOLCHAIN_ROOT/$TOOLCHAIN_NAME/*/libc/lib/
