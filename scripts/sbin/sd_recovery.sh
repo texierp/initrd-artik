@@ -2,8 +2,14 @@
 
 SCRIPT_PATH="$(dirname $(readlink -f "$0"))"
 
-EMMC_ROOT_DEV=/dev/mmcblk0p3
 SD_ROOT_DEV=/dev/mmcblk1p3
+
+# Check if there is OTA feature or not.
+if [ -n "`cat /proc/cmdline |grep ota`" ]; then
+	EMMC_ROOT_DEV=/dev/mmcblk0p7
+else
+	EMMC_ROOT_DEV=/dev/mmcblk0p3
+fi
 
 SD_MNT=/root/sd_root
 
