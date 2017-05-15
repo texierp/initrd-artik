@@ -157,17 +157,49 @@ if [ -e ${rootmnt}/.need_sd_resize ]; then
 	echo "Need to resize the root partition..."
 	umount ${rootmnt}
 	ROOT_START_SECT=`fdisk -u -l ${ROOT%??} | grep ${ROOT} | awk '{ print $2 }'`
-	fdisk -u ${ROOT%??} <<EOF>/dev/null
-p
+	ROOT_PART=${ROOT#${ROOT%?}}
+	if $OTA; then
+		MODULES0_START_SECT=`fdisk -u -l ${ROOT%??} | grep mmcblk1p6 | awk '{ print $2 }'`
+		MODULES0_END_SECT=`fdisk -u -l ${ROOT%??} | grep mmcblk1p6 | awk '{ print $3 }'`
+		MODULES_START_SECT=`fdisk -u -l ${ROOT%??} | grep mmcblk1p5 | awk '{ print $2 }'`
+		MODULES_END_SECT=`fdisk -u -l ${ROOT%??} | grep mmcblk1p5 | awk '{ print $3 }'`
+		EXTENDED_PART_SECT=`fdisk -u -l ${ROOT%??} | grep mmcblk1p4 | awk '{ print $2 }'`
+		fdisk -u ${ROOT%??} <<EOF>/dev/null
 d
-3
+7
+d
+6
+d
+5
+d
+4
 n
-p
-3
+e
+$EXTENDED_PART_SECT
+
+n
+$MODULES_START_SECT
+$MODULES_END_SECT
+n
+$MODULES0_START_SECT
+$MODULES0_END_SECT
+n
 $ROOT_START_SECT
 
 w
 EOF
+	else
+		fdisk -u ${ROOT%??} <<EOF>/dev/null
+d
+$ROOT_PART
+n
+p
+$ROOT_PART
+$ROOT_START_SECT
+
+w
+EOF
+	fi
 	sync
 	mdev -s
 	e2fsck -y -f ${ROOT} > /dev/null 2>&1
