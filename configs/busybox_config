@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Busybox version: 1.24.0
-# Wed Jan  4 23:08:08 2017
+# Tue Oct 10 20:49:02 2017
 #
 CONFIG_HAVE_DOT_CONFIG=y
 
@@ -627,7 +627,7 @@ CONFIG_FEATURE_UMOUNT_ALL=y
 #
 CONFIG_FEATURE_MOUNT_LOOP=y
 CONFIG_FEATURE_MOUNT_LOOP_CREATE=y
-# CONFIG_FEATURE_MTAB_SUPPORT is not set
+CONFIG_FEATURE_MTAB_SUPPORT=y
 CONFIG_VOLUMEID=y
 
 #
