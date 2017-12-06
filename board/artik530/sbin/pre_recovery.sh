@@ -5,6 +5,14 @@ LED_BLUE=38
 GPIO_PATH=/sys/class/gpio
 SCRIPT_DIR=`dirname "$(readlink -f "$0")"`
 
+check_board()
+{
+	if [ -n "`cat /proc/cmdline |grep board_type=compy`" ]; then
+		LED_RED=43
+		LED_BLUE=159
+	fi
+}
+
 led_ctl()
 {
 	local led=$1
@@ -18,6 +26,7 @@ led_ctl()
 	echo $ctl > $GPIO_PATH/gpio$led/value
 }
 
+check_board
 led_ctl $LED_RED 1
 
 CUR_DIR=$(pwd)
