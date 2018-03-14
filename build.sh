@@ -7,7 +7,7 @@ usage()
 {
 	echo "usage: build.sh [options]"
 	echo "-h		Print this help message"
-	echo "-b [board]	Target board(artik520, artik1020, artik530, artik710)"
+	echo "-b [board]	Target board(artik520, artik1020, artik530, artik710, artik711s)"
 }
 
 parse_options()
@@ -35,7 +35,7 @@ TOOLCHAIN_ROOT=$OUTPUT/toolchain
 SYS_ROOT=$OUTPUT/sys_root
 SCRIPT_DIR=`pwd`/scripts
 
-if [ $TARGET == "artik710" ]; then
+if [[ $TARGET == artik71* ]]; then
 	TARGET_ARCH=arm64
 else
 	TARGET_ARCH=arm

@@ -27,7 +27,7 @@ sudo apt-get install u-boot-tools
 
 ### 3.2 Build the initrd
 ```
-./build.sh -b [Board type:artik520, artik1020, artik530, artik710]
+./build.sh -b [Board type:artik520, artik1020, artik530, artik710, artik711s]
 ```
 
 The 'uInitrd' file will be generated into output/uInitrd
