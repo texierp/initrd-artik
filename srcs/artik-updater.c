@@ -1,4 +1,4 @@
-/* artik_updater - Firmware Updater Utility for Artik
+/* artik-updater - Firmware Updater Utility for Artik
  *
  * Copyright (C) 2016 Samsung Electronics
  * Author: Jaewon Kim <jaewon02.kim@samsung.com>
@@ -353,8 +353,8 @@ void show_boot_info(struct boot_info *boot)
 void print_usage(void)
 {
 	printf("Usage:\n");
-	printf("  artik_updater <option>\n");
-	printf("  artik_updater -b <file> -m <file> -t <tag>\n");
+	printf("  artik-updater <option>\n");
+	printf("  artik-updater -b <file> -m <file> -t <tag>\n");
 	printf("\nOption Description:\n");
 	printf("  -i\t\t\tshow partition information\n");
 	printf("  -s\t\t\tbooting state change to success\n");
